@@ -6,49 +6,16 @@
 # 
 # v0.01 animate quick man boss intro sequence with custom spritesheet
 # v0.02 cut and animate walking sequence
+#           explore: how do we reverse an image?
 # v0.03 draw walking quickman and use WASD to initiate walking animation
 # v0.04 cut and animate jumping sequence » W to jump
 # v0.05 cut and animate block
 # v0.06 shoot + boomerangs
 
-
-class Sprite:
-    def __init__(self, animation, x, y, speed, move): # move is a boolean. should it move?
-        # animation is simply a list of image objects
-        self.x = x
-        self.y = y
-        self.animation = animation
-        self.frames = len(self.animation)
-        self.w = self.animation[0].width
-        # self.l = self.animation[0].length
-        self.speed = speed
-        self.index = 0
-        self.move = move # the sprite always animates, but if this is False, it doesn't move
-    
-    
-    def show(self):
-        # our sprite can have a speed below 1!
-        # this floor and modulo lets us have decimal indices!
-        index = floor(self.index) % self.frames
-        image(self.animation[index], self.x, self.y)
-        
-    
-    # This is Daniel Shiffman's code for his animated horse.
-    # Animate from left to right, with a modifier for frame speed
-    def animate(self):
-        ANIMATION_RATE = 80 * self.speed
-        
-        self.index += self.speed
-        
-        if self.move:
-            self.x -= self.speed * ANIMATION_RATE
-            
-            if self.x < -self.w:
-                self.x = width  # supposed to be negative self.width
-
+from Sprite import Sprite
 
 def setup():
-    global sprites
+    global sprites, mirror
         
     colorMode(HSB, 360, 100, 100, 100)
     spritesheet = loadImage("quickman-run-shoot-boomerangs.png")
@@ -62,7 +29,8 @@ def setup():
     san = spritesheet.get(64, 32, 32, 32)
     
     imgs = [ni, ichi, ni, san] 
-    sprites = []   
+    sprites = []
+    mirror = False
     
     for i in range(9):
         sprites.append(Sprite(imgs, 10, 10 + i * 32, random(0.15, 0.25), move=True))
@@ -72,13 +40,25 @@ def setup():
     
 
 def draw():
-    global sprites
+    global sprites, mirror
+    
     background(209, 95, 33)
     
     for sprite in sprites:
-        sprite.show()
+        
+        if mirror:
+            sprite.show_mirror()
+        else:
+            sprite.show()
         sprite.animate()
+
+
+def keyPressed():
+    global mirror
     
+    if key == 'm':
+        mirror = not mirror
+        
     
 # returns a quick man intro sprite sequence
 def sprite_quickman_intro():
