@@ -11,6 +11,10 @@
 # v0.04 cut and animate jumping sequence » W to jump
 # v0.05 cut and animate block
 # v0.06 shoot + boomerangs
+#
+#
+#
+# BUG: image uses a top left rectangle coordinate but we want center
 
 from Sprite import Sprite
 
@@ -32,25 +36,34 @@ def setup():
     sprites = []
     mirror = False
     
-    for i in range(9):
-        sprites.append(Sprite(imgs, 10, 10 + i * 32, random(0.15, 0.25), move=True))
-        
-        
-    sprites.append(sprite_quickman_intro())
+    # for i in range(9):
+    # sprites.append(Sprite(imgs, 10, 10 + i * 32, random(0.15, 0.25), move=True))
+    # sprites.append(sprite_quickman_intro())
+    
+    for i in range(100):
+        particle = Sprite(imgs, random(width), random(height), random(0.15, 0.25), move=True)
+        sprites.append(particle)
     
 
 def draw():
-    global sprites, mirror
-    
+    global sprites, mirror    
     background(209, 95, 33)
     
+    
+    
     for sprite in sprites:
-        
-        if mirror:
-            sprite.show_mirror()
-        else:
-            sprite.show()
+        sprite.update()
+        sprite.edges()
         sprite.animate()
+        sprite.show()
+    
+    
+    # for sprite in sprites:
+    #     if mirror:
+    #         sprite.show_mirror()
+    #     else:
+    #         sprite.show()
+    #     sprite.animate()
 
 
 def keyPressed():
@@ -58,8 +71,9 @@ def keyPressed():
     
     if key == 'm':
         mirror = not mirror
-        
-    
+
+
+
 # returns a quick man intro sprite sequence
 def sprite_quickman_intro():
     spritesheet = loadImage("quickman-intro.png")
